@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Odai.Domain\Odai.Domain.csproj" />
+    <ProjectReference Include="..\Odai.Logic\Odai.Logic.csproj" />
     <ProjectReference Include="..\Odai.Shared\Odai.Shared.csproj" />
   </ItemGroup>
 
