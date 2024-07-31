@@ -1,0 +1,6 @@
+@Odai.Api_HostAddress = http://localhost:5208
+
+GET {{Odai.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
