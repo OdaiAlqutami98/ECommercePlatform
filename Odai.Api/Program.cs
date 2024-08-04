@@ -1,4 +1,6 @@
+
 using Microsoft.OpenApi.Models;
+
 using Odai.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +39,7 @@ builder.Services.AddSwaggerGen(o =>
       }
     });
 });
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
