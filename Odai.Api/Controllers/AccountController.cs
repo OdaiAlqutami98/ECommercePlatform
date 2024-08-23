@@ -14,31 +14,18 @@ namespace Odai.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class AccountController : ControllerBase
+    [Authorize(Roles = "Owner")]
+    public class AccountController(IIdentityService _identityService, UserManager<ApplicationUser> _userManager) : ControllerBase
     {
-        private readonly IIdentityService _identityService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public AccountController(IIdentityService identityService,UserManager<ApplicationUser> userManager)
-        {
-            _identityService = identityService;
-            _userManager = userManager;
-        }
-
-
-        [HttpPost]
-        [Route("Register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register(ApplicationUserModel model)
-        {
-            var respone = await _identityService.RegisterUserAsync(model);
-            return Ok(respone);
-        }
-
-
+        //private readonly IIdentityService _identityService;
+        //private readonly UserManager<ApplicationUser> _userManager;
+        //public AccountController(IIdentityService identityService,UserManager<ApplicationUser> userManager)
+        //{
+        //    _identityService = identityService;
+        //    _userManager = userManager;
+        //}
         [HttpGet]
         [Route("GetUserById")]
-        [AllowAnonymous]
         public async Task<IActionResult>GetUserById(Guid id)
         {
             var user =await _identityService.GetUserAsync(id);
@@ -46,52 +33,21 @@ namespace Odai.Api.Controllers
         }
         [HttpGet]
         [Route("GetAllUsers")]
-        [AllowAnonymous]
-       // [Authorize(Roles ="Owner")]
+      
         public async Task<IActionResult> GetAllUser()
         {
             var users=await _identityService.GetAllUsersAsync();
             return Ok(users);
         }
-
-
-        [HttpPost]
-        [Route("Login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginRequstt request)
-        {
-            var response = await _identityService.AuthenticateAsync(request);
-            if (response.Succeeded)
-            {
-                SetTokenCookie(response.Data.Token);
-            }
-            return Ok(response);
-        }
-        private void SetTokenCookie(string token)
-        {
-            // append cookie with refresh token to the http response
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
-            Response.Cookies.Append("refreshToken", token, cookieOptions);
-        }
         [HttpGet]
         [Route("GetUserRoles")]
-       // [Authorize(Roles = "Owner")]
-        public async Task<IActionResult> GetUserRoles(Guid userId)
+        public async Task<IActionResult> GetUserRoles()
         {
-            var roles=_identityService.GetUserRolesAsync(userId);
-            if (roles==null)
-            {
-                return BadRequest();
-            }
-            return Ok(roles);
+            var userRoles = await _identityService.GetUserRolesAsync();
+            return Ok(userRoles);
         }
         [HttpPost]
         [Route("UpdateUserRoles")]
-     //   [Authorize(Roles = "Owner")]
         public async Task<IActionResult> UpdateUserRoles(Guid userId, [FromBody] List<string> roles)
         {
             var response=await _identityService.UpdateUserRolesAsync(userId, roles);
@@ -103,11 +59,9 @@ namespace Odai.Api.Controllers
         }
         [HttpGet]
         [Route("RegisterAdministrator")]
-        [AllowAnonymous]
         public async Task<IActionResult> RegisterAdministrator()
         {
             var res = await _identityService.CreateUserAsync("Owner@OdaiShop.com", "P@ssw0rd");
-           
                 return Ok(res);
         }
     }

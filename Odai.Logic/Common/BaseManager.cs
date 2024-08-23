@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Odai.DataModel;
-using Odai.Domain;
+using Odai.Domain.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,6 @@ namespace Odai.Logic.Common
         {
             get { return _context.Set<TEntity>(); }
         }
-
         public virtual async Task<TEntity?> GetById(int id)
         {
             return await Entity.FindAsync(id);

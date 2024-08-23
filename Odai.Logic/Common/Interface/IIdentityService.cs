@@ -1,5 +1,4 @@
-﻿using Azure;
-using Odai.Domain;
+﻿using Odai.Domain;
 using Odai.Domain.Enums;
 using Odai.Shared;
 using Odai.Shared.Auth;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Odai.Logic.Common.IdentityService;
 
 namespace Odai.Logic.Common.Interface
 {
@@ -19,7 +19,8 @@ namespace Odai.Logic.Common.Interface
         Task<Shared.Auth.Response<ApplicationUser>> CreateUserAsync(string userName, string password);
         Task<Shared.Auth.Response<ApplicationUser>> RegisterUserAsync(ApplicationUserModel model);
         Task<List<ApplicationUser>> GetAllUsersAsync();
-        Task<List<string>> GetUserRolesAsync(Guid userId);
+        Task<List<UserWithRoles>> GetUserRolesAsync();
+
         Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles);
 
     }

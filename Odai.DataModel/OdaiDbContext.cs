@@ -16,6 +16,15 @@ namespace Odai.DataModel
         {
             
         }
+        //Add-Migration initialize -project "Odai.DataModel" 
+        //update-database  -project "Odai.DataModel" 
+        public DbSet<Category> Category { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Rating>Ratings { get; set; }
+        public DbSet<BasketItem> BasketItems { get; set; }
+        public DbSet<Basket> baskets { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

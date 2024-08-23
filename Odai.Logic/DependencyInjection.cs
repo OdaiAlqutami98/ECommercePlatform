@@ -4,12 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Odai.DataModel;
+using Odai.Domain;
+using Odai.Logic.Common.Interface;
+using Odai.Logic.Common;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Odai.Logic.Manager;
 
 namespace Odai.Logic
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure( this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddInfrastructure( this IServiceCollection services,IConfiguration config)
         {
             string IdentityConnString = config.GetConnectionString("DefaultConnection");
             services.AddDbContext<OdaiDbContext>(option =>
@@ -32,6 +38,7 @@ namespace Odai.Logic
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultScheme= JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -45,6 +52,19 @@ namespace Odai.Logic
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]))
                 };
             });
+            services.AddTransient<IIdentityService, IdentityService>();
+            services.AddScoped<UserManager<ApplicationUser>>();
+            services.AddScoped<SignInManager<ApplicationUser>>();
+            services.AddScoped<CategoryManager>();
+            services.AddScoped<ProductManager>();
+            services.AddScoped<OrderItemManager>();
+            services.AddScoped<OrderManager>();
+            services.AddScoped<RatingManager>();
+            services.AddScoped<BasketManager>();
+            services.AddScoped<BasketItemManager>();
+
+
+            return services;
         }
     }
 }

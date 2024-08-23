@@ -46,17 +46,26 @@ namespace Odai.Logic.Common
             {
                 UserName = model.Name,
                 Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
                 EmailConfirmed = true,
                 UserType = UserType.User
             };
-
+            // Ensure roles exist in the system
+            string[] roleNames = { "Owner", "Admin", "User" };
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await _roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    // Create the roles and seed them to the database
+                    var roleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
+                }
+            }
             var result = await _userManager.CreateAsync(user, model.Password);
+            await _userManager.AddToRoleAsync(user, Role.User.ToString());
             if (result.Succeeded)
             {
                 return new Shared.Auth.Response<ApplicationUser>(user);
             }
-          //  var errors = result.Errors.Select(e => e.Description).ToArray();
             return new Shared.Auth.Response<ApplicationUser>($"Accounts Registered Before {model.Name}");
         }
         public async Task<Shared.Auth.Response<RegisterResponse>> AuthenticateAsync(LoginRequstt request)
@@ -83,31 +92,36 @@ namespace Odai.Logic.Common
         public async Task<RegisterResponse> GetAuthenticationResponseAsync(ApplicationUser user)
         {
             // generate new jwt
-            JwtSecurityToken jwtSecurityToken = GenerateJwToken(user);
+            JwtSecurityToken jwtSecurityToken =await GenerateJwToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
 
 
             var response = new RegisterResponse
             {
-               // Id = 1,
                 Name = user.UserName,
                 UserId = user.Id,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                 Email = user.Email,
                 UserName = user.UserName,
-                role = UserType.User.ToString(),
+                role = Role.User.ToString(),
                 IsVerified = user.EmailConfirmed,
             };
             return response;
         }
-        private JwtSecurityToken GenerateJwToken(ApplicationUser user)
+        private async Task< JwtSecurityToken> GenerateJwToken(ApplicationUser user)
         {
-            var claims = new[]
+            var claims = new List<Claim>();
             {
-                new Claim(JwtRegisteredClaimNames.Sub,user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email,user.Email),
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName);
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
+                new Claim(JwtRegisteredClaimNames.Email, user.Email);
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString());
+                new Claim(ClaimTypes.Role,user.UserType.ToString());
+                //var roles = await _userManager.GetRolesAsync(user); 
+                //foreach (var role in roles)
+                //{
+                //    claims.Add(new Claim(ClaimTypes.Role,role.ToString()));
+                //}
             };
             //signingCredentials
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
@@ -116,7 +130,7 @@ namespace Odai.Logic.Common
                 claims: claims,
                 issuer: _config["JwtSettings:Issuer"],
                 audience: _config["JwtSettings:Audience"],
-               expires: DateTime.UtcNow.AddMinutes(30),
+               expires: DateTime.UtcNow.AddDays(30),
                signingCredentials: signingCredentials
                );
             return token;
@@ -128,7 +142,7 @@ namespace Odai.Logic.Common
                 UserName = userName,
                 Email = userName,
                 EmailConfirmed = true,
-               // UserType = usertype,
+               UserType = UserType.Admin,
             };
             // Ensure roles exist in the system
             string[] roleNames = { "Owner", "Admin", "User" };
@@ -142,7 +156,7 @@ namespace Odai.Logic.Common
                 }
             }
             var result = await _userManager.CreateAsync(user, password);
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "Admin");
                 return new Shared.Auth.Response<ApplicationUser>(user);
         }
 
@@ -161,17 +175,26 @@ namespace Odai.Logic.Common
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<List<string>> GetUserRolesAsync(Guid userId)
+        public async Task<List<UserWithRoles>> GetUserRolesAsync()
         {
-            var user=await _userManager.FindByIdAsync(userId.ToString());
-            if (user!=null)
+            var users = await _userManager.Users.ToListAsync();
+            if (users != null && users.Count > 0)
             {
-                return new List<string>(await _userManager.GetRolesAsync(user));
+                var userWithRolesList = new List<UserWithRoles>();
+
+                foreach (var user in users)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    userWithRolesList.Add(new UserWithRoles
+                    {
+                        User = user,
+                        Roles = roles.ToList()
+                    });
+                }
+                return userWithRolesList;
             }
-            return null;
-
+            return new List<UserWithRoles>();
         }
-
         public async Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());

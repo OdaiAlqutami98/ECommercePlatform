@@ -24,8 +24,5 @@ namespace Odai.Shared
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        [Phone]
-        public string? PhoneNumber { get; set; }
     }
 }
