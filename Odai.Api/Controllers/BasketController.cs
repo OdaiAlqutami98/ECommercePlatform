@@ -49,7 +49,7 @@ namespace Odai.Api.Controllers
             {
                 return BadRequest("Invalid user ID format.");
             }
-            if (model.Id is not null)
+            if (model.Id is null)
             {
                 Basket basket=new Basket();
               //  basket.BasketItems = model.BasketItems.Select(item => new BasketItem

@@ -21,7 +21,7 @@ namespace Odai.Api.Controllers
         [Route("GetProduct")]
         public async Task<IActionResult> GetProduct()
         {
-            var product=await _productManager.GetAll().Include(p=>p.Category).ToListAsync();
+            var product=await _productManager.GetAll().Include(c=>c.Category).ToListAsync();
                 //.Select(p => new
                 //{
                 //    p.Name,

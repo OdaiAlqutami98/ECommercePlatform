@@ -22,12 +22,12 @@ namespace Odai.Api.Controllers
         [HttpGet]
         public async Task<IActionResult>GetCategory()
         {
-            var category = await _categoryManager.GetAll()
-                 .Select(c => new
-                 {
-                   c.Name,
-                     ProductName = c.Products.ToArray(),
-                 }).ToListAsync();//.Include(c=>c.Products).ToListAsync();
+            var category = await _categoryManager.GetAll().Include(p=>p.Products).ToListAsync();
+                 //.Select(c => new
+                 //{
+                 //  c.Name,
+                 //    ProductName = c.Products.ToArray(),
+                 //}).ToListAsync();//.Include(c=>c.Products).ToListAsync();
             if (category != null)
             {
                 return Ok(category);

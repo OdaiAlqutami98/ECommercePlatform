@@ -19,7 +19,7 @@ namespace Odai.Api.Controllers
         [Route("GetAll")]
         public async Task<IActionResult>GetAll()
         {
-            var basketitem=await _basketItemManager.GetAll().Include(b=>b.Basket).ToListAsync();
+            var basketitem=await _basketItemManager.GetAll().Include(b=>b.Basket).Include(p=>p.Product).ToListAsync();
             if (basketitem is not null )
             {
                 return Ok(basketitem);

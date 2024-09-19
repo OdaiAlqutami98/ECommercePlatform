@@ -94,6 +94,7 @@ namespace Odai.Logic.Common
             // generate new jwt
             JwtSecurityToken jwtSecurityToken =await GenerateJwToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
+            var role=rolesList.FirstOrDefault();
 
 
             var response = new RegisterResponse
@@ -103,26 +104,27 @@ namespace Odai.Logic.Common
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                 Email = user.Email,
                 UserName = user.UserName,
-                role = Role.User.ToString(),
+                role = role,
                 IsVerified = user.EmailConfirmed,
             };
             return response;
         }
         private async Task< JwtSecurityToken> GenerateJwToken(ApplicationUser user)
         {
-            var claims = new List<Claim>();
+           
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName);
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
-                new Claim(JwtRegisteredClaimNames.Email, user.Email);
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString());
-                new Claim(ClaimTypes.Role,user.UserType.ToString());
-                //var roles = await _userManager.GetRolesAsync(user); 
-                //foreach (var role in roles)
-                //{
-                //    claims.Add(new Claim(ClaimTypes.Role,role.ToString()));
-                //}
+                  new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                  new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                  new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role)); 
+            }
             //signingCredentials
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
