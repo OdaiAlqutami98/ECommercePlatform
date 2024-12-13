@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Odai.Shared
 {
-    public class RatingModel
+    public class CommentModel
     {
         public int? Id { get; set; }
         public int ProductId { get; set; }
         public Guid UserId { get; set; }
-        public int Value { get; set; }
+        public string Content { get; set; }
     }
+    
+    
 }

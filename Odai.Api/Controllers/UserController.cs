@@ -13,18 +13,17 @@ namespace Odai.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(IIdentityService _identityService, OdaiDbContext _context, SignInManager<ApplicationUser> _signInManager) : ControllerBase
+    public class UserController : ControllerBase
     {
-        //private readonly IIdentityService _identityService;
-        //private readonly OdaiDbContext _context;
-        //private readonly SignInManager<ApplicationUser> _signInManager;
-        //public UserController(IIdentityService identityService,OdaiDbContext context,SignInManager<ApplicationUser> signInManager)
-        //{
-        //    _context = context;
-        //    _identityService = identityService;
-        //    _signInManager = signInManager;
-
-        //}
+        private readonly IIdentityService _identityService;
+        private readonly OdaiDbContext _context;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public UserController(IIdentityService identityService, OdaiDbContext context, SignInManager<ApplicationUser> signInManager)
+        {
+            _context = context;
+            _identityService = identityService;
+            _signInManager = signInManager;
+        }
 
         [HttpPost]
         [Route("Register")]
@@ -32,7 +31,12 @@ namespace Odai.Api.Controllers
         public async Task<IActionResult> Register(ApplicationUserModel model)
         {
             var respone = await _identityService.RegisterUserAsync(model);
-            return Ok(respone);
+            if(respone.Succeeded)
+            {
+                return Ok(respone);
+
+            }
+            return BadRequest(respone);
         }
         [HttpPost]
         [Route("Login")]

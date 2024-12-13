@@ -11,11 +11,11 @@ namespace Odai.Domain
 {
     public class Order:BaseEntity
     {
-        [ForeignKey("User")]
-        public Guid? UserId { get; set; }
-        public ApplicationUser User { get; set; }
-        public string Status { get; set; }
+        public Guid UserId { get; set; }
+        [ForeignKey("UserId")]
+        public ApplicationUser? User { get; set; }
+        public OrderStatus? Status { get; set; }
         public decimal TotalPrice { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
+        public ICollection<OrderItem>? OrderItems { get; set; }
     }
 }

@@ -8,20 +8,12 @@ using System.Threading.Tasks;
 
 namespace Odai.Shared
 {
-    public record OrderModel
-        (
-         int? Id,
-         Guid UserId,
-        // [DeniedValues("A")]
-         string Status,
-         decimal TotalPrice,
-          List<OrderItemModel> OrderItemModels
-        );
-    //{
-    //    public int? Id { get; set; }
-    //    public Guid? UserId { get; set; }
-    //    public string Status { get; set; }
-    //    public decimal TotalPrice { get; set; }
-    //    public List<OrderItemModel> OrderItemModels { get; set; }
-    //}
+    public class OrderModel
+    {
+        public int? Id { get; set; }
+        public Guid UserId { get; set; }
+        public int Status { get; set; }
+        public decimal TotalPrice { get; set; }
+        public ICollection<OrderItemModel>? OrderItems { get; set; }
+    }
 }

@@ -10,9 +10,9 @@ namespace Odai.Domain
 {
     public class Basket :BaseEntity
     {
-        [ForeignKey("User")]
+        [ForeignKey("UserId")]
         public Guid? UserId { get; set; }
-        public ApplicationUser User { get; set; }
-        public List<BasketItem> BasketItems { get; set; }
+        public ApplicationUser? User { get; set; }
+        public ICollection<BasketItem>? BasketItems { get; set; }
     }
 }

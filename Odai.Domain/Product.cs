@@ -17,13 +17,15 @@ namespace Odai.Domain
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
+        public bool Favorite { get; set; }
+        public ProductStatus Status { get; set; }
         public string? FilePath { get; set; }
         public string? ContentType { get; set; }
-        [DisplayName("Category")]
-        [ForeignKey("Category")]
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
-        public bool Favorite { get; set; }
-        public Status Status { get; set; }
+        public int Stock { get; set; }
+        public ICollection<Rating>? Ratings { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
     }
 }

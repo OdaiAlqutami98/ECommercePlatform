@@ -10,21 +10,23 @@ namespace Odai.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderItemController(OrderItemManager _orderitemmanager) : ControllerBase
+    public class OrderItemController : ControllerBase
     {
-        //private readonly OrderItemManager _orderitemmanager;
-        //public OrderItemController(OrderItemManager orderItemManager)
-        //{
-        //    _orderitemmanager = orderItemManager;
-        //}
+        private readonly OrderItemManager _orderItemManager;
+        private readonly OrderManager _orderManager;
+        public OrderItemController(OrderItemManager orderItemManager, OrderManager orderManager)
+        {
+            _orderItemManager = orderItemManager;
+            _orderManager = orderManager;
+        }
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult>GetAll()
         {
-            var orderitem=await _orderitemmanager.GetAll().Include(o=>o.Product).OrderBy(o=>o.Order).ToListAsync();
-            if (orderitem!=null)
+            var orderItem = await _orderItemManager.GetAll().Include(o=>o.Product).ToListAsync();
+            if (orderItem != null)
             {
-                return Ok(orderitem);
+                return Ok(orderItem);
             }
             return BadRequest(false);
         }
@@ -32,10 +34,10 @@ namespace Odai.Api.Controllers
         [Route("GetById")]
         public async Task<IActionResult>GetById(int id)
         {
-            var orderitem = await _orderitemmanager.GetById(id);
-            if (orderitem!=null)
+            var orderItem = await _orderItemManager.GetById(id);
+            if (orderItem != null)
             {
-                return Ok(orderitem);
+                return Ok(orderItem);
             }
             return BadRequest(false);
         }
@@ -43,30 +45,37 @@ namespace Odai.Api.Controllers
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(OrderItemModel model)
         {
-            if(model.Id==null)
+            var order = await _orderManager.Get(o => o.Id == model.OrderId).Include(o => o.OrderItems).FirstOrDefaultAsync();
+            if (model.Id == null)
             {
-                OrderItem order=new OrderItem();
-                order.Quantity = model.Quantity;
-                order.OrderId = model.OrderId;
-                order.ProductId = model.ProductId;
-                order.CreatonDate=DateTime.Now;
-                await _orderitemmanager.Add(order);
-                await _orderitemmanager.SaveChangesAsync();
-                return Ok(new Response<bool>());
+                OrderItem orderItem=new OrderItem();
+                orderItem.Quantity = model.Quantity;
+                orderItem.OrderId = model.OrderId;
+                orderItem.ProductId = model.ProductId;
+                orderItem.UnitPrice=model.UnitPrice;
+                orderItem.CreatonDate=DateTime.Now;
+                await _orderItemManager.Add(orderItem);
+                order.TotalPrice = order.OrderItems.Sum(item => item.Quantity * item.UnitPrice);
+                _orderManager.Update(order);
+                await _orderItemManager.SaveChangesAsync();
+                return Ok(new Response<bool> { Succeeded = true, Message = "Order Item Added successfully.", Data = true });
             }
             else
             {
-                var orderitem=await _orderitemmanager.Get(oi=>oi.Id==model.Id).FirstOrDefaultAsync();
-                if (orderitem!=null)
+                var orderItem = await _orderItemManager.Get(oi => oi.Id == model.Id).FirstOrDefaultAsync();
+                if (orderItem != null)
                 {
-                    OrderItem orderItem=new OrderItem();
-                    orderitem.OrderId = model.OrderId;
-                    orderitem.ProductId = model.ProductId;
-                    orderitem.Quantity = model.Quantity;
-                    orderitem.LastUpdateDate = DateTime.Now;
-                     _orderitemmanager.Update(orderitem);
-                    await _orderitemmanager.SaveChangesAsync();
-                    return Ok(new Response<bool>());
+                    orderItem.OrderId = model.OrderId;
+                    orderItem.ProductId = model.ProductId;
+                    orderItem.Quantity = model.Quantity;
+                    orderItem.UnitPrice = model.UnitPrice;
+                    orderItem.LastUpdateDate = DateTime.Now;
+                    _orderItemManager.Update(orderItem);
+
+                    order.TotalPrice = order.OrderItems.Sum(item => item.Quantity * item.UnitPrice);
+                    _orderManager.Update(order);
+                    await _orderItemManager.SaveChangesAsync();
+                    return Ok(new Response<bool> { Succeeded = true, Message = "Order Item updated successfully.", Data = true });
                 }
                 else
                 {
@@ -78,12 +87,19 @@ namespace Odai.Api.Controllers
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var orderitem= await _orderitemmanager.Get(oi=>oi.Id==id).FirstOrDefaultAsync();
-            if (orderitem!=null)
+
+            var orderItem = await _orderItemManager.Get(oi => oi.Id == id).Include(oi=>oi.Order).FirstOrDefaultAsync();
+            if (orderItem != null)
             {
-                await _orderitemmanager.Delete(orderitem);
-                await _orderitemmanager.SaveChangesAsync();
-                return Ok(new Response<bool>());
+                var order = orderItem.Order;
+                await _orderItemManager.Delete(orderItem);
+
+                order.TotalPrice -= (orderItem.Quantity * orderItem.UnitPrice);
+
+                _orderManager.Update(order);
+
+                await _orderItemManager.SaveChangesAsync();
+                return Ok(new Response<bool> { Succeeded = true, Message = "Order Item Deleted successfully.", Data = true });
             }
             return NotFound(" Not Found OrderItem");
         }

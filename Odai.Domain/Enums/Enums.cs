@@ -6,13 +6,6 @@ using System.Threading.Tasks;
 
 namespace Odai.Domain.Enums
 {
-    public enum UserType
-    {
-        Owner = 1,
-        Admin =2,
-        User=3,
-        Merchant=4,
-    }
     public enum Role
     {
         Owner=1,
@@ -20,19 +13,21 @@ namespace Odai.Domain.Enums
         User=3,
         Merchant=4,
     }
-    public enum Status
+    public enum ProductStatus
     {
-        Available = 1,
-        Expired=2,
+        Available ,
+        Expired ,
+        ComingSoon ,
+        OutOfStock 
     }
     public enum OrderStatus
     {
-        Pending,       // الطلب قيد الانتظار
-        Processing,    // الطلب قيد المعالجة
-        Shipped,       // الطلب تم شحنه
-        Delivered,     // الطلب تم تسليمه
-        Cancelled,     // الطلب تم إلغاؤه
-        Returned,      // الطلب تم إرجاعه
-        Failed         // الطلب فشل
+        Pending,      
+        Processing,    
+        Shipped,       
+        Delivered,    
+        Cancelled,     
+        Returned,      
+        Failed        
     }
 }

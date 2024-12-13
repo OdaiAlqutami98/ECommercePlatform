@@ -6,10 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Odai.DataModel;
 using Odai.Domain;
 using Odai.Logic.Common.Interface;
-using Odai.Logic.Common;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Odai.Logic.Manager;
+using Odai.Logic.Common.Service;
 
 namespace Odai.Logic
 {
@@ -62,6 +62,7 @@ namespace Odai.Logic
             services.AddScoped<RatingManager>();
             services.AddScoped<BasketManager>();
             services.AddScoped<BasketItemManager>();
+            services.AddScoped<CommentManager>();
 
 
             return services;

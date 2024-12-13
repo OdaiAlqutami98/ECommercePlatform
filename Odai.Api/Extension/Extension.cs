@@ -19,13 +19,13 @@
             }
             return upladFileModel;
         }
-        //public static byte[] GetImageFile(string filePath)
-        //{
-        //    var imagePath = Path.Combine(filePath); ;
-        //    var imageBytes = System.IO.File.ReadAllBytes(imagePath);
-        //    var fileName = System.IO.Path.GetFileName(imagePath);
-        //    return imageBytes;
-        //}
+        public static byte[] GetImageFile(string filePath)
+        {
+            var imagePath = Path.Combine(filePath); ;
+            var imageBytes = System.IO.File.ReadAllBytes(imagePath);
+            var fileName = System.IO.Path.GetFileName(imagePath);
+            return imageBytes;
+        }
     }
     public class UpladFileModel
     {

@@ -2,39 +2,48 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Odai.Domain;
+using Odai.Domain.Enums;
 using Odai.Logic.Common.Interface;
 using Odai.Logic.Manager;
 using Odai.Shared;
 using Odai.Shared.Auth;
+using Odai.Shared.Table;
 
 namespace Odai.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController(OrderManager _orderManager,IIdentityService _identityService) : ControllerBase
+    public class OrderController: ControllerBase
     {
-        //private readonly OrderManager _orderManager;
-        //public OrderController(OrderManager orderManager)
-        //{
-        //    _orderManager = orderManager;
-        //}
+        private readonly OrderManager _orderManager;
+        public OrderController(OrderManager orderManager)
+        {
+            _orderManager = orderManager;
+        }
         [HttpGet]
         [Route("GetAll")]
-        public async Task<IActionResult>GetAll()
+        public async Task<TableResponse<Order>>GetAll(int pageIndex,int pageSize)
         {
-            var order=await _orderManager.GetAll().Include(o=>o.OrderItems).ToListAsync();
-            if (order.Any())
+            var query =  _orderManager.GetAll().Include(o=>o.OrderItems);
+            var length = query.Count();
+            var orders = await query
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+           
+            return new TableResponse<Order>
             {
-                return  Ok(order);
-            }
-            return BadRequest(false);
+                RecordsTotal = length,
+                Data = orders
+            };
+
         }
         [HttpGet]
         [Route("GetById")]
         public async Task<IActionResult>GetById(int id)
         {
             var order = await _orderManager.GetById(id);
-            if (order!=null)
+            if (order is not null)
             {
                 return Ok(order);
             }
@@ -44,56 +53,55 @@ namespace Odai.Api.Controllers
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(OrderModel model)
         {
-            var userId = await _identityService.GetUserAsync(model.UserId);
-            if (userId is null)
-            {
-                return Unauthorized("User not found.");
-            }
-            if (!Guid.TryParse(userId.Id.ToString(), out Guid user))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-            if (model.Id==null)
+          
+            if (model.Id == null)
             {
                 Order order=new Order();
-                order.TotalPrice = model.TotalPrice;
-                order.Status = model.Status;
-                order.CreatedBy = user;
-                order.UserId = user;
-                order.CreatonDate = DateTime.Now;
-                order.OrderItems = model.OrderItemModels.Select(item => new OrderItem
+                order.TotalPrice = model.OrderItems?.Sum(item => item.Quantity * item.UnitPrice) ?? 0;
+                order.Status = (OrderStatus?)model.Status;
+                order.UserId = model.UserId;
+                order.OrderItems = model.OrderItems?.Select(item => new OrderItem
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice,
                 }).ToList();
+                order.CreatedBy = model.UserId;
+                order.CreatonDate = DateTime.Now;
                 await _orderManager.Add(order);
                 await _orderManager.SaveChangesAsync();
-                return Ok(new Response<bool>());
+                return Ok(new Response<bool>{ Succeeded = true, Message = "Order added successfully.", Data = true });
             }
             else
             {
-                var order = await _orderManager.Get(o => o.Id == model.Id).FirstOrDefaultAsync();
+                var order = await _orderManager.Get(o => o.Id == model.Id).Include(o => o.OrderItems).FirstOrDefaultAsync();
+
                 if (order != null)
                 {
-                    order.TotalPrice = model.TotalPrice;
-                    order.Status = model.Status;
-                    order.LastUpdateBy = user;
+                    order.TotalPrice = model.OrderItems?.Sum(item => item.Quantity * item.UnitPrice) ?? 0; 
+                    order.Status = (OrderStatus)model.Status;
+                    order.LastUpdateBy = model.UserId;
                     order.LastUpdateDate = DateTime.Now;
-                    order.OrderItems.Clear();  // Clear existing items
-                    order.OrderItems = model.OrderItemModels.Select(item => new OrderItem
+                    order.OrderItems?.Clear();  // Clear existing items
+                    if (model.OrderItems != null)
                     {
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                    }).ToList();
+                        order.OrderItems = model.OrderItems.Select(item => new OrderItem
+                        {
+                            ProductId = item.ProductId,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice,
+                            CreatonDate = DateTime.Now
+                        }).ToList();
+                    }
+                    order.TotalPrice = order.OrderItems.Sum(item => item.Quantity * item.UnitPrice);
+
                     _orderManager.Update(order);
                     await _orderManager.SaveChangesAsync();
-                    return Ok(new Response<bool>());
+                    return Ok(new Response<bool> { Succeeded = true, Message = "Order updated successfully.", Data = true });
                 }
-                else
-                {
-                    return NoContent();
-                }
+               
             }
+            return BadRequest(false);
         }
         [HttpDelete]
         [Route("Delete")]

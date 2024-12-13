@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 
 namespace Odai.Shared
 {
-    public record ProductModel
-   (
-         int? Id ,
-         string Name, 
-         string Description, 
-         decimal Price ,
-         int CategoryId ,
-         IFormFile? ImagePath, 
-         bool Favorite ,
-         string Status
-
-    );
+    public class ProductModel
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public int CategoryId { get; set; }
+        public IFormFile? ImagePath { get; set; }
+        public bool Favorite { get; set; }
+        public int Status { get; set; }
+        public int Stock { get; set; }
+        public ICollection<CommentModel>? Comments { get; set; }
+        public ICollection<RatingModel>?  Ratings { get; set; }
+    }
+       
 }

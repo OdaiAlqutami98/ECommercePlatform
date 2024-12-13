@@ -10,15 +10,18 @@ namespace Odai.Domain
 {
     public class BasketItem:BaseEntity
     {
-        [ForeignKey("Basket")]
         public int BasketId { get; set; }
-        public Basket Basket { get; set; }
-        [ForeignKey("Product")]
+        [ForeignKey("BasketId")]
+        public Basket? Basket { get; set; }
         public int ProductId { get; set; }
-        public Product Product { get; set; }
+        [ForeignKey("ProductId")]
+        public Product? Product { get; set; }
         public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+
         public Guid UserId { get; set; }
-        public ApplicationUser User { get; set; }// معرف المستخدم الذي أضاف العنصر للسلة
+        [ForeignKey("UserId")]
+        public ApplicationUser? User { get; set; }
 
     }
 }

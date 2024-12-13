@@ -18,7 +18,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odai.Logic.Common
+namespace Odai.Logic.Common.Service
 {
     public class IdentityService : IIdentityService
     {
@@ -47,7 +47,7 @@ namespace Odai.Logic.Common
                 UserName = model.Name,
                 Email = model.Email,
                 EmailConfirmed = true,
-                UserType = UserType.User
+                Role = Role.User
             };
             // Ensure roles exist in the system
             string[] roleNames = { "Owner", "Admin", "User" };
@@ -92,9 +92,9 @@ namespace Odai.Logic.Common
         public async Task<RegisterResponse> GetAuthenticationResponseAsync(ApplicationUser user)
         {
             // generate new jwt
-            JwtSecurityToken jwtSecurityToken =await GenerateJwToken(user);
+            JwtSecurityToken jwtSecurityToken = await GenerateJwToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
-            var role=rolesList.FirstOrDefault();
+            var role = rolesList.FirstOrDefault();
 
 
             var response = new RegisterResponse
@@ -109,9 +109,9 @@ namespace Odai.Logic.Common
             };
             return response;
         }
-        private async Task< JwtSecurityToken> GenerateJwToken(ApplicationUser user)
+        private async Task<JwtSecurityToken> GenerateJwToken(ApplicationUser user)
         {
-           
+
 
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
@@ -123,7 +123,7 @@ namespace Odai.Logic.Common
             };
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role)); 
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
             //signingCredentials
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
@@ -144,7 +144,7 @@ namespace Odai.Logic.Common
                 UserName = userName,
                 Email = userName,
                 EmailConfirmed = true,
-               UserType = UserType.Admin,
+                Role = Role.Admin,
             };
             // Ensure roles exist in the system
             string[] roleNames = { "Owner", "Admin", "User" };
@@ -159,7 +159,7 @@ namespace Odai.Logic.Common
             }
             var result = await _userManager.CreateAsync(user, password);
             await _userManager.AddToRoleAsync(user, "Admin");
-                return new Shared.Auth.Response<ApplicationUser>(user);
+            return new Shared.Auth.Response<ApplicationUser>(user);
         }
 
         public async Task<ApplicationUser> GetUserAsync(Guid userId)
@@ -200,17 +200,17 @@ namespace Odai.Logic.Common
         public async Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user==null)
+            if (user == null)
             {
                 return new Shared.Auth.Response<string>("User Not Found");
             }
             var currentRoles = await _userManager.GetRolesAsync(user);
-            var removeResult=await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
             if (!removeResult.Succeeded)
             {
                 return new Shared.Auth.Response<string>("Failed to remove current roles");
             }
-            var addResult=await _userManager.AddToRolesAsync(user, roles);
+            var addResult = await _userManager.AddToRolesAsync(user, roles);
             if (!addResult.Succeeded)
             {
                 return new Shared.Auth.Response<string>("Failed to add new roles");

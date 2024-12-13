@@ -9,6 +9,6 @@ namespace Odai.Domain
     public class UserWithRoles
     {
         public ApplicationUser User { get; set; }
-        public List<string> Roles { get; set; }
+        public ICollection<string> Roles { get; set; }
     }
 }

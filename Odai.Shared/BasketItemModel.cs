@@ -7,18 +7,14 @@ using System.Threading.Tasks;
 
 namespace Odai.Shared
 {
-    public record BasketItemModel
-        (
-        int? Id,
-        int BasketId,
-        int ProductId,
-        int Quantity,
-         Guid UserId
-        );
-    //{
-    //    public int? Id { get; set; }
-    //    public int BasketId { get; set; }
-    //    public int ProductId { get; set; }
-    //    public int Quantity { get; set; }
-    //}
+    public class BasketItemModel
+    {
+        public int? Id { get; set; }
+        public int BasketId { get; set; }
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public Guid UserId { get; set; }
+        public decimal UnitPrice { get; set; }
+    }
+      
 }

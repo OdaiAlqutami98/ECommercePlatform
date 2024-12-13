@@ -6,6 +6,8 @@ namespace Odai.Domain
 {
     public class ApplicationUser:IdentityUser<Guid>
     {
-        public UserType UserType { get; set; }
+        public Role Role { get; set; }
+        public ICollection<Order>? Orders { get; set; }
+
     }
 }

@@ -13,66 +13,71 @@ namespace Odai.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BasketItemController(BasketItemManager _basketItemManager ,IIdentityService _identityService) : ControllerBase
+    public class BasketItemController : ControllerBase
     {
+        private readonly BasketItemManager _basketItemManager;
+        public BasketItemController(BasketItemManager basketItemManager)
+        {
+            _basketItemManager = basketItemManager;
+        }
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult>GetAll()
         {
-            var basketitem=await _basketItemManager.GetAll().Include(b=>b.Basket).Include(p=>p.Product).ToListAsync();
-            if (basketitem is not null )
+            var basketItem = await _basketItemManager.GetAll()
+                .Include(b=>b.Basket)
+                .Include(p=>p.Product)
+                .ToListAsync();
+            if (basketItem != null )
             {
-                return Ok(basketitem);
+                return Ok(basketItem);
             }
-            return BadRequest(false);
+            return BadRequest(new Response<bool>());
         }
         [HttpGet]
         [Route("GetById")]
         public async Task<IActionResult>GetById(int id)
         {
-            var basketitem=await _basketItemManager.GetById(id);
-            if (basketitem is not null)
+            var basketItem = await _basketItemManager.GetById(id);
+            if (basketItem is not null)
             {
-                return Ok(basketitem);
+                return Ok(basketItem);
             }
-            return BadRequest(false);
+            return BadRequest(new Response<bool>());
         }
         [HttpPost]
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(BasketItemModel model)
         {
-            var userId = await _identityService.GetUserAsync(model.UserId);
-            if (userId is null)
+            if (model.Id == null)
             {
-                return Unauthorized("User not found.");
-            }
-            if (!Guid.TryParse(userId.Id.ToString(), out Guid user))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-            if (model.Id is null)
-            {
-                BasketItem basket=new BasketItem();
+                BasketItem basket = new BasketItem();
+                basket.BasketId = model.BasketId;
                 basket.ProductId = model.ProductId;
                 basket.Quantity = model.Quantity;
+                basket.UnitPrice=model.UnitPrice;
+                basket.UserId = model.UserId;
                 basket.CreatonDate = DateTime.Now;
-                basket.CreatedBy = user;
+                basket.CreatedBy = model.UserId;
                 await _basketItemManager.Add(basket);
                 await _basketItemManager.SaveChangesAsync();
-                return Ok(new Response<bool>("Item added to basket successfully"));
+                return Ok(new Response<bool> { Succeeded = true, Message = "Item added To Basket successfully.", Data = true });
             }
             else
             {
-                var basketitem=await _basketItemManager.Get().FirstOrDefaultAsync(b=>b.Id == model.Id);
-                if (basketitem is not null)
+                var basketItem = await _basketItemManager.Get(bi => bi.Id == model.Id).FirstOrDefaultAsync();
+                if (basketItem != null)
                 {
-                    basketitem.ProductId= model.ProductId;
-                    basketitem.Quantity= model.Quantity;
-                    basketitem.LastUpdateDate = DateTime.Now;
-                    basketitem.LastUpdateBy = user;
-                    _basketItemManager.Update(basketitem);
+                    basketItem.BasketId = model.BasketId;
+                    basketItem.ProductId= model.ProductId;
+                    basketItem.Quantity= model.Quantity;
+                    basketItem.UnitPrice= model.UnitPrice;
+                    basketItem.UserId = model.UserId;
+                    basketItem.LastUpdateDate = DateTime.Now;
+                    basketItem.LastUpdateBy = model.UserId;
+                    _basketItemManager.Update(basketItem);
                     await _basketItemManager.SaveChangesAsync();
-                    return Ok(new Response<bool>("Basket item updated successfully"));
+                    return Ok(new Response<bool> { Succeeded = true, Message = "Item Updated To Basket successfully.", Data=true });
                 }
             }
             return BadRequest(new Response<bool>());
@@ -81,13 +86,14 @@ namespace Odai.Api.Controllers
         [Route("Delete")]
         public async Task<IActionResult>Delete(int id)
         {
-            var basketitem=await _basketItemManager.GetById(id);
-            if (basketitem is not null)
+            var Item = await _basketItemManager.Get(oi => oi.Id == id).Include(oi => oi.Basket).FirstOrDefaultAsync();
+            if (Item != null)
             {
-                await _basketItemManager.Delete(basketitem);
-                return Ok(new Response<bool>("Item Deleted from basket successfully"));
+                await _basketItemManager.Delete(Item);
+                await _basketItemManager.SaveChangesAsync();
+                return Ok(new Response<bool> { Succeeded = true, Message = "Item deleted from basket successfully.", Data = true });
             }
-            return BadRequest(new Response<bool>());
+            return NotFound("Not Found Basket Item");
         }
     }
 }

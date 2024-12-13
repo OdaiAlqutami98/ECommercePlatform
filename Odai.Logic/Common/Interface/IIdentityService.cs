@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Odai.Logic.Common.IdentityService;
+using static Odai.Logic.Common.Service.IdentityService;
 
 namespace Odai.Logic.Common.Interface
 {
@@ -20,7 +20,6 @@ namespace Odai.Logic.Common.Interface
         Task<Shared.Auth.Response<ApplicationUser>> RegisterUserAsync(ApplicationUserModel model);
         Task<List<ApplicationUser>> GetAllUsersAsync();
         Task<List<UserWithRoles>> GetUserRolesAsync();
-
         Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles);
 
     }

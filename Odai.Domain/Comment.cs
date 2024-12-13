@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 
 namespace Odai.Domain
 {
-    public class Rating:BaseEntity
+   public class Comment:BaseEntity
     {
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
-
         public Product? Product { get; set; }
-        public Guid UserId { get; set; }
+        public  Guid UserId { get; set; }
         [ForeignKey("UserId")]
-
-        public ApplicationUser? User { get; set; }
-        public int Value { get; set; }  // Rating value (e.g., 1-5)
+        public ApplicationUser? ApplicationUser { get; set; }
+        public string? Content { get; set; }
     }
 }

@@ -1,76 +1,83 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
 using Odai.Domain;
+using Odai.Domain.Enums;
 using Odai.Logic.Manager;
 using Odai.Shared;
 using Odai.Shared.Auth;
+using Odai.Shared.Table;
 
 namespace Odai.Api.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController(CategoryManager _categoryManager) : ControllerBase
-    {
-     //   private readonly CategoryManager _categoryManager;
-        //public CategoryController(CategoryManager categoryManager)
-        //{
-        //    _categoryManager = categoryManager;
-        //}
 
-        [HttpGet]
-        public async Task<IActionResult>GetCategory()
+    public class CategoryController : ControllerBase
+    {
+        private readonly CategoryManager _categoryManager;
+        private readonly ProductManager _productManager;
+
+        public CategoryController(CategoryManager categoryManager, ProductManager productManager)
         {
-            var category = await _categoryManager.GetAll().Include(p=>p.Products).ToListAsync();
-                 //.Select(c => new
-                 //{
-                 //  c.Name,
-                 //    ProductName = c.Products.ToArray(),
-                 //}).ToListAsync();//.Include(c=>c.Products).ToListAsync();
+            _categoryManager = categoryManager;
+            _productManager = productManager;
+        }
+        [HttpGet("GetCategory")]
+        public async Task<TableResponse<Category>> GetCategory(int pageIndex, int pageSize)
+        {
+            var query = _categoryManager.GetAll().Include(c=>c.Products);
+            var length = query.Count();
+
+            var category = await query
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new TableResponse<Category>
+            {
+                RecordsTotal = length,
+                Data = category
+            };
+        }
+        [HttpGet("GetById/{Id}")]
+        public async Task<IActionResult> GetById(int Id)
+        {
+            var category = await _categoryManager.GetById(Id);
             if (category != null)
             {
                 return Ok(category);
-            }
-            return BadRequest(false);
-          
-        }
-        [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var product = await _categoryManager.GetById(id);
-            if (product != null)
-            {
-                return Ok(product);
             }
             return BadRequest(false);
 
         }
         [HttpPost]
         [Route("AddEdit")]
-        public async Task<IActionResult>AddEdit(CategoryModel model)
+        public async Task<IActionResult> AddEdit(CategoryModel model)
         {
-            if (model.Id==null)
+            if (model.Id == null)
             {
-                Category category=new Category();
+                Category category = new Category();
                 category.Name = model.Name;
                 category.CreatonDate = DateTime.Now;
-                category.LastUpdateDate= DateTime.Now;
+                category.LastUpdateDate = DateTime.Now;
                 await _categoryManager.Add(category);
                 await _categoryManager.SaveChangesAsync();
-                return Ok(new Response<bool>());
+                return Ok(new Response<bool>(true,"Category Added Success"));
             }
             else
             {
-                var category=await _categoryManager.Get(c=>c.Id==model.Id).FirstOrDefaultAsync();
-                if (category!=null)
+                var category = await _categoryManager.Get(c => c.Id == model.Id).FirstOrDefaultAsync();
+                if (category != null)
                 {
                     category.Name = model.Name;
                     category.LastUpdateDate = DateTime.Now;
                     _categoryManager.Update(category);
                     await _categoryManager.SaveChangesAsync();
-                    return Ok(new Response<bool>());    
+                    return Ok(new Response<bool>(true));
                 }
                 else
                 {
@@ -78,18 +85,27 @@ namespace Odai.Api.Controllers
                 }
             }
         }
-        [HttpDelete]
-        [Route("Delete/{Id}")]
-        public async Task<IActionResult>Delete(int Id)
+        [HttpDelete("Delete/{Id}")]
+        public async Task<IActionResult> Delete(int Id)
         {
-            var category= await _categoryManager.Get(c => c.Id == Id).FirstOrDefaultAsync();
-            if (category!=null)
+            var category = await _categoryManager.Get(c => c.Id == Id).FirstOrDefaultAsync();
+            var hasProducts = await _productManager.Get(p => p.CategoryId == Id).AnyAsync();
+            if (hasProducts)
+            {
+                return BadRequest(new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = "Cannot delete this category because it is associated with existing products."
+                });
+            }
+
+            if (category != null)
             {
                 await _categoryManager.Delete(category);
-              await  _categoryManager.SaveChangesAsync();
-                return Ok(new Response<bool>());
+                await _categoryManager.SaveChangesAsync();
+                return Ok(new Response<bool> { Succeeded = true, Message = "Category deleted successfully." });
             }
-            return NotFound(new Response<bool>("Not Found Category"));
+            return NotFound(new Response<bool> { Succeeded = false, Message = "Category not found." });
         }
     }
 }

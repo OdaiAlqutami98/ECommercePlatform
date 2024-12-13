@@ -15,15 +15,16 @@ namespace Odai.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Owner")]
-    public class AccountController(IIdentityService _identityService, UserManager<ApplicationUser> _userManager) : ControllerBase
+    public class AccountController : ControllerBase
     {
-        //private readonly IIdentityService _identityService;
-        //private readonly UserManager<ApplicationUser> _userManager;
-        //public AccountController(IIdentityService identityService,UserManager<ApplicationUser> userManager)
-        //{
-        //    _identityService = identityService;
-        //    _userManager = userManager;
-        //}
+        private readonly IIdentityService _identityService;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public AccountController(IIdentityService identityService, UserManager<ApplicationUser> userManager)
+        {
+            _identityService= identityService;
+            _userManager= userManager;
+        }
         [HttpGet]
         [Route("GetUserById")]
         public async Task<IActionResult>GetUserById(Guid id)
@@ -59,10 +60,11 @@ namespace Odai.Api.Controllers
         }
         [HttpGet]
         [Route("RegisterAdministrator")]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterAdministrator()
         {
             var res = await _identityService.CreateUserAsync("Owner@OdaiShop.com", "P@ssw0rd");
-                return Ok(res);
+             return Ok(res);
         }
     }
 }

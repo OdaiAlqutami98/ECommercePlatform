@@ -12,8 +12,6 @@ namespace Odai.Domain
     public class Category:BaseEntity
     {
         public string Name { get; set; }
-        public string? FilePath { get; set; }
-        public string? ContentType { get; set; }
-        public List<Product> Products { get; set; }
+        public ICollection<Product>? Products { get; set; }
     }
 }

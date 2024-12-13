@@ -12,15 +12,16 @@ namespace Odai.Domain
 {
     public class OrderItem:BaseEntity
     {
-        [ForeignKey("Product")]
-        [DisplayName("Product")]
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-        public int Quantity { get; set; }
-        [ForeignKey("Order")]
-        [DisplayName("Order")]
+        [ForeignKey("OrderId")]
         public int OrderId { get; set; }
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
+        public int ProductId { get; set; }
+        [ForeignKey("ProductId")]
+        public Product? Product { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+      
+       
         
     }
 }
