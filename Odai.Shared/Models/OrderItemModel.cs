@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odai.Shared
+namespace Odai.Shared.Models
 {
     public class OrderItemModel
     {

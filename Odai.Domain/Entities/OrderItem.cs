@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odai.Domain
+namespace Odai.Domain.Entities
 {
-    public class OrderItem:BaseEntity
+    public class OrderItem : BaseEntity
     {
         [ForeignKey("OrderId")]
         public int OrderId { get; set; }
@@ -20,8 +20,8 @@ namespace Odai.Domain
         public Product? Product { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-      
-       
-        
+
+
+
     }
 }

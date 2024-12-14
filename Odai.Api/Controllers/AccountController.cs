@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Odai.Domain;
+using Odai.Domain.Entities;
 using Odai.Domain.Enums;
 using Odai.Logic.Common.Interface;
 using Odai.Shared;

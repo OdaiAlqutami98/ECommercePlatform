@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Odai.Domain;
+using Odai.Domain.Entities;
 using Odai.Domain.Enums;
 using Odai.Logic.Common.Interface;
 using Odai.Logic.Manager;
-using Odai.Shared;
 using Odai.Shared.Auth;
+using Odai.Shared.Models;
 using Odai.Shared.Table;
 
 namespace Odai.Api.Controllers

@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Odai.Domain\Odai.Domain.csproj" />
-    <ProjectReference Include="..\Odai.Logic\Odai.Logic.csproj" />
-    <ProjectReference Include="..\Odai.Shared\Odai.Shared.csproj" />
+    <ProjectReference Include="..\Odai.Domain\ECommercePlatform.Domain.csproj" />
+    <ProjectReference Include="..\Odai.Logic\ECommercePlatform.Logic.csproj" />
+    <ProjectReference Include="..\Odai.Shared\ECommercePlatform.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

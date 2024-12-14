@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Odai.DataModel;
-using Odai.Domain;
+using Odai.Domain.Entities;
 using Odai.Logic.Common;
 using System;
 using System.Collections.Generic;

@@ -10,9 +10,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Odai.Domain
+namespace Odai.Domain.Entities
 {
-    public class Product:BaseEntity
+    public class Product : BaseEntity
     {
         public string Name { get; set; }
         public string Description { get; set; }

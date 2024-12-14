@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Odai.Domain;
+using Odai.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

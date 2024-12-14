@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odai.Domain
+namespace Odai.Domain.Entities
 {
-    public class BasketItem:BaseEntity
+    public class BasketItem : BaseEntity
     {
         public int BasketId { get; set; }
         [ForeignKey("BasketId")]

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Odai.Domain.Common;
 
-namespace Odai.Domain
+namespace Odai.Domain.Entities
 {
-    public class Category:BaseEntity
+    public class Category : BaseEntity
     {
         public string Name { get; set; }
         public ICollection<Product>? Products { get; set; }

@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Odai.DataModel;
-using Odai.Domain;
 using Odai.Logic.Common.Interface;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Odai.Logic.Manager;
 using Odai.Logic.Common.Service;
+using Odai.Domain.Entities;
 
 namespace Odai.Logic
 {

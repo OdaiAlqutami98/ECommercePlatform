@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Odai.Shared\Odai.Shared.csproj" />
+    <ProjectReference Include="..\Odai.Shared\ECommercePlatform.Shared.csproj" />
   </ItemGroup>
 
 </Project>

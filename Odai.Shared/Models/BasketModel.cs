@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odai.Shared
+namespace Odai.Shared.Models
 {
     public class BasketModel
     {
@@ -12,5 +12,5 @@ namespace Odai.Shared
         public Guid? UserId { get; set; }
         public ICollection<BasketItemModel>? BasketItems { get; set; }
     }
-       
+
 }

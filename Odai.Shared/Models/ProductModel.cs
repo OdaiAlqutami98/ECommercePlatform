@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Odai.Shared
+namespace Odai.Shared.Models
 {
     public class ProductModel
     {
@@ -19,7 +19,7 @@ namespace Odai.Shared
         public int Status { get; set; }
         public int Stock { get; set; }
         public ICollection<CommentModel>? Comments { get; set; }
-        public ICollection<RatingModel>?  Ratings { get; set; }
+        public ICollection<RatingModel>? Ratings { get; set; }
     }
-       
+
 }

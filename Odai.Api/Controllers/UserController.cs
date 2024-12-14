@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Odai.DataModel;
-using Odai.Domain;
+using Odai.Domain.Entities;
 using Odai.Logic.Common.Interface;
-using Odai.Shared;
 using Odai.Shared.Auth;
+using Odai.Shared.Models;
 using System.Security.Principal;
 
 namespace Odai.Api.Controllers

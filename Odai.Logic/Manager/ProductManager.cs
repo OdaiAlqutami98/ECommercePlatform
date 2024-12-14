@@ -1,5 +1,5 @@
 ﻿using Odai.DataModel;
-using Odai.Domain;
+using Odai.Domain.Entities;
 using Odai.Logic.Common;
 using Odai.Shared;
 using Odai.Shared.Auth;

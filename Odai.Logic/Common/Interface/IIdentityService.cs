@@ -1,7 +1,7 @@
-﻿using Odai.Domain;
+﻿using Odai.Domain.Entities;
 using Odai.Domain.Enums;
-using Odai.Shared;
 using Odai.Shared.Auth;
+using Odai.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
