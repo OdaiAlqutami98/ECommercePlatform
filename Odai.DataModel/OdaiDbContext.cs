@@ -25,6 +25,7 @@ namespace Odai.DataModel
         public DbSet<Rating>Ratings { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
         public DbSet<Basket> baskets { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -40,13 +40,6 @@ namespace Odai.Api.Controllers
             var users=await _identityService.GetAllUsersAsync();
             return Ok(users);
         }
-        [HttpGet]
-        [Route("GetUserRoles")]
-        public async Task<IActionResult> GetUserRoles()
-        {
-            var userRoles = await _identityService.GetUserRolesAsync();
-            return Ok(userRoles);
-        }
         [HttpPost]
         [Route("UpdateUserRoles")]
         public async Task<IActionResult> UpdateUserRoles(Guid userId, [FromBody] List<string> roles)

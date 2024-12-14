@@ -176,27 +176,6 @@ namespace Odai.Logic.Common.Service
         {
             return await _context.Users.ToListAsync();
         }
-
-        public async Task<List<UserWithRoles>> GetUserRolesAsync()
-        {
-            var users = await _userManager.Users.ToListAsync();
-            if (users != null && users.Count > 0)
-            {
-                var userWithRolesList = new List<UserWithRoles>();
-
-                foreach (var user in users)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    userWithRolesList.Add(new UserWithRoles
-                    {
-                        User = user,
-                        Roles = roles.ToList()
-                    });
-                }
-                return userWithRolesList;
-            }
-            return new List<UserWithRoles>();
-        }
         public async Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());

@@ -19,7 +19,6 @@ namespace Odai.Logic.Common.Interface
         Task<Shared.Auth.Response<ApplicationUser>> CreateUserAsync(string userName, string password);
         Task<Shared.Auth.Response<ApplicationUser>> RegisterUserAsync(ApplicationUserModel model);
         Task<List<ApplicationUser>> GetAllUsersAsync();
-        Task<List<UserWithRoles>> GetUserRolesAsync();
         Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles);
 
     }
