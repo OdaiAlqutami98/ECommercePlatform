@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
+using Odai.Api.Extension;
 using Odai.Domain.Entities;
 using Odai.Domain.Enums;
 using Odai.Logic.Manager;
@@ -58,10 +59,18 @@ namespace Odai.Api.Controllers
         [Route("AddEdit")]
         public async Task<IActionResult> AddEdit(CategoryModel model)
         {
+            UpladFileModel filePath = new UpladFileModel();
+            if (model.ImagePath != null)
+            {
+
+                filePath = await Extension.Extension.UploadFile(model.ImagePath);
+            }
             if (model.Id == null)
             {
                 Category category = new Category();
                 category.Name = model.Name;
+                category.FilePath = filePath.FileName;
+                category.ContentType = filePath.ContentType;
                 category.CreatonDate = DateTime.Now;
                 category.LastUpdateDate = DateTime.Now;
                 await _categoryManager.Add(category);
@@ -74,6 +83,8 @@ namespace Odai.Api.Controllers
                 if (category != null)
                 {
                     category.Name = model.Name;
+                    category.FilePath = filePath.FileName;
+                    category.ContentType = filePath.ContentType;
                     category.LastUpdateDate = DateTime.Now;
                     _categoryManager.Update(category);
                     await _categoryManager.SaveChangesAsync();

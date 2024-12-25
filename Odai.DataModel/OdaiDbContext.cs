@@ -16,8 +16,8 @@ namespace Odai.DataModel
         {
             
         }
-        //Add-Migration initialize -project "Odai.DataModel" 
-        //update-database  -project "Odai.DataModel" 
+        //Add-Migration initialize -project "ECommercePlatform.DataModel" 
+        //update-database  -project "ECommercePlatform.DataModel" 
         public DbSet<Category> Category { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }

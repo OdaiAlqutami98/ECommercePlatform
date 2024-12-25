@@ -12,6 +12,7 @@ namespace Odai.Shared.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public IFormFile? ImagePath { get; set; }
         public ICollection<ProductModel>? Products { get; set; }
     }
 

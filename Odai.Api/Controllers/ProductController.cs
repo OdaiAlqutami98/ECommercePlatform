@@ -85,6 +85,8 @@ namespace Odai.Api.Controllers
                     product.Description = model.Description;
                     product.Favorite = model.Favorite;
                     product.Price= model.Price;
+                    product.FilePath = filePath.FileName;
+                    product.ContentType = filePath.ContentType;
                     product.CategoryId = model.CategoryId;
                     product.Stock = model.Stock;
                     product.Status = (ProductStatus)model.Status;
