@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using Odai.Logic;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,8 +65,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/images"  
+});
 app.UseAuthentication();
 
 app.UseAuthorization();

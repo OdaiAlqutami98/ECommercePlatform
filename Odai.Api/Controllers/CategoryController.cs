@@ -27,8 +27,8 @@ namespace Odai.Api.Controllers
             _categoryManager = categoryManager;
             _productManager = productManager;
         }
-        [HttpGet("GetCategory")]
-        public async Task<TableResponse<Category>> GetCategory(int pageIndex, int pageSize)
+        [HttpGet("GetAllCategoryPaged")]
+        public async Task<TableResponse<Category>> GetAllCategoryPaged(int pageIndex, int pageSize)
         {
             var query = _categoryManager.GetAll().Include(c=>c.Products);
             var length = query.Count();
@@ -43,6 +43,17 @@ namespace Odai.Api.Controllers
                 RecordsTotal = length,
                 Data = category
             };
+        }
+
+        [HttpGet("GetAll")]
+        public async Task <IActionResult> GetAll()
+        {
+            var category=await _categoryManager.GetAll().ToListAsync();
+            if (category != null)
+            {
+                return Ok(category);
+            }
+            return BadRequest();
         }
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(int Id)
