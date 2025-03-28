@@ -1,14 +1,6 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Odai.Domain.Entities;
-using Odai.Domain.Enums;
 using Odai.Logic.Common.Interface;
-using Odai.Shared;
-using Odai.Shared.Auth;
 
 namespace Odai.Api.Controllers
 {
@@ -18,12 +10,9 @@ namespace Odai.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IIdentityService _identityService;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public AccountController(IIdentityService identityService, UserManager<ApplicationUser> userManager)
+        public AccountController(IIdentityService identityService)
         {
             _identityService= identityService;
-            _userManager= userManager;
         }
         [HttpGet]
         [Route("GetUserById")]
@@ -39,6 +28,13 @@ namespace Odai.Api.Controllers
         {
             var users=await _identityService.GetAllUsersAsync();
             return Ok(users);
+        }
+        [HttpDelete]
+        [Route("DeleteUser")]
+        public async Task <IActionResult> DeleteUser(Guid id)
+        {
+            var user= await _identityService.DeleteUser(id);
+            return Ok(user);
         }
         [HttpPost]
         [Route("UpdateUserRoles")]

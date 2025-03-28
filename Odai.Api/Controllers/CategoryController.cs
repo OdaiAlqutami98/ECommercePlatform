@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Versioning;
 using Odai.Api.Extension;
 using Odai.Domain.Entities;
-using Odai.Domain.Enums;
 using Odai.Logic.Manager;
 using Odai.Shared.Auth;
 using Odai.Shared.Models;

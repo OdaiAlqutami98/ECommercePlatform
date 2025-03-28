@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Odai.DataModel;
 
@@ -11,9 +12,11 @@ using Odai.DataModel;
 namespace Odai.DataModel.Migrations
 {
     [DbContext(typeof(OdaiDbContext))]
-    partial class OdaiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250323224555_AddIsDeleted")]
+    partial class AddIsDeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,7 +255,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("baskets", (string)null);
+                    b.ToTable("baskets");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.BasketItem", b =>
@@ -301,7 +304,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BasketItems", (string)null);
+                    b.ToTable("BasketItems");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.Category", b =>
@@ -339,7 +342,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.Comment", b =>
@@ -380,7 +383,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.Order", b =>
@@ -419,7 +422,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.OrderItem", b =>
@@ -463,7 +466,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.Product", b =>
@@ -522,7 +525,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Product", (string)null);
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("Odai.Domain.Entities.Rating", b =>
@@ -563,7 +566,7 @@ namespace Odai.DataModel.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

@@ -196,5 +196,16 @@ namespace Odai.Logic.Common.Service
             }
             return new Shared.Auth.Response<string>("User roles update successfully");
         }
+
+        public async Task <Shared.Auth.Response<string>> DeleteUser(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user != null) 
+            {
+               await _userManager.DeleteAsync(user);
+               return new Shared.Auth.Response<string>("User deleted successfully");
+            }
+            return new Shared.Auth.Response<string>("User Not Found");
+        }
     }
 }

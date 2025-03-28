@@ -18,6 +18,7 @@ namespace Odai.Domain.Common
         public Guid? CreatedBy { get; set; }
         public DateTime? CreatonDate { get; set; }= DateTime.Now;
         public Guid? LastUpdateBy { get; set; }
-        public DateTime? LastUpdateDate { get; set; }
+        public DateTime? LastUpdateDate { get; set; } = DateTime.Now;
+        public int? IsDeleted { get; set; }
     }
 }

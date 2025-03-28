@@ -14,12 +14,13 @@ namespace Odai.Logic.Common.Interface
     public interface IIdentityService
     {
         Task<ApplicationUser> GetUserAsync(Guid userId);
+        Task<Response<string>> DeleteUser(Guid userId);
         Task<bool> IsInRoleAsync(Guid userId, string role);
-        Task<Shared.Auth.Response<RegisterResponse>> AuthenticateAsync(LoginRequstt request);
-        Task<Shared.Auth.Response<ApplicationUser>> CreateUserAsync(string userName, string password);
-        Task<Shared.Auth.Response<ApplicationUser>> RegisterUserAsync(ApplicationUserModel model);
+        Task<Response<RegisterResponse>> AuthenticateAsync(LoginRequstt request);
+        Task<Response<ApplicationUser>> CreateUserAsync(string userName, string password);
+        Task<Response<ApplicationUser>> RegisterUserAsync(ApplicationUserModel model);
         Task<List<ApplicationUser>> GetAllUsersAsync();
-        Task<Shared.Auth.Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles);
+        Task<Response<string>> UpdateUserRolesAsync(Guid userId, List<string> roles);
 
     }
 }
