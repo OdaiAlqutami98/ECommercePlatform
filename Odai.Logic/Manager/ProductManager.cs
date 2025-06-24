@@ -4,7 +4,7 @@ using Odai.Logic.Common;
 
 namespace Odai.Logic.Manager
 {
-    public class ProductManager : BaseManager<Product, OdaiDbContext>
+    public class ProductManager : BaseServiceIdentity<Product, OdaiDbContext>
     {
         public ProductManager(OdaiDbContext context) : base(context)
         {

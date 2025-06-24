@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Odai.Logic;
 using Microsoft.Extensions.FileProviders;
+using ECommercePlatform.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +68,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),

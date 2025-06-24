@@ -4,7 +4,7 @@ using Odai.Logic.Common;
 
 namespace Odai.Logic.Manager
 {
-    public class RatingManager:BaseManager<Rating,OdaiDbContext>
+    public class RatingManager:BaseServiceIdentity<Rating,OdaiDbContext>
     {
         public RatingManager(OdaiDbContext context):base(context) 
         { 

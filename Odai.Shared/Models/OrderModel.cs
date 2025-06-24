@@ -7,6 +7,7 @@ namespace Odai.Shared.Models
         public Guid UserId { get; set; }
         public int Status { get; set; }
         public decimal TotalPrice { get; set; }
+        public int PromoCode { get; set; }
         public ICollection<OrderItemModel>? OrderItems { get; set; }
     }
 }

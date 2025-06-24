@@ -7,7 +7,7 @@ namespace Odai.Shared.Models
         public int BasketId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
-        public Guid UserId { get; set; }
+        public int ClientId { get; set; }
         public decimal UnitPrice { get; set; }
     }
 

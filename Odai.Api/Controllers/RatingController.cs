@@ -29,23 +29,20 @@ namespace Odai.Api.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-           return new TableResponse<Rating>
-           {
-               RecordsTotal = length,
-               Data = rating
-           };
+            return new TableResponse<Rating>(rating, length);
+           
         }
-        [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult>GetById(int id)
-        {
-            var rating=await _ratingManager.GetById(id);
-            if (rating is not null)
-            {
-                return Ok(rating);
-            }
-            return NotFound();
-        }
+        //[HttpGet]
+        //[Route("GetById")]
+        //public async Task<IActionResult>GetById(int id)
+        //{
+        //    var rating=await _ratingManager.GetById(id);
+        //    if (rating is not null)
+        //    {
+        //        return Ok(rating);
+        //    }
+        //    return NotFound();
+        //}
         [HttpPost]
         [Route("AddEdit")]
         public async Task<IActionResult> AddEdit(RatingModel model)
@@ -54,11 +51,10 @@ namespace Odai.Api.Controllers
             {
                 Rating rating =new Rating();
                 rating.Value = model.Value;
-                rating.UserId = model.UserId;
+                rating.ClientId = model.ClientId;
                 rating.ProductId = model.ProductId;
                 rating.CreatonDate=DateTime.Now;
-                rating.CreatedBy = model.UserId;
-                await _ratingManager.Add(rating);
+                await _ratingManager.Insert(rating);
                 await _ratingManager.SaveChangesAsync();
                 return Ok(new Response<bool> { Succeeded = true, Message = "Rating Added successfully." });
             }
@@ -68,10 +64,9 @@ namespace Odai.Api.Controllers
                 if (rating is not null)
                 {
                     rating.Value = model.Value; 
-                    rating.UserId = model.UserId;
+                    rating.ClientId = model.ClientId;
                     rating.ProductId = model.ProductId;
                     rating.LastUpdateDate = DateTime.Now;
-                    rating.LastUpdateBy = model.UserId;
                     _ratingManager.Update(rating);
                     await _ratingManager.SaveChangesAsync();
                     return Ok(new Response<bool> { Succeeded = true, Message = "Rating Updated successfully." });

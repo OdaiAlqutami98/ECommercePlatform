@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ECommercePlatform.Shared.Constants;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Odai.Domain.Entities;
 using Odai.Logic.Manager;
@@ -29,23 +30,20 @@ namespace Odai.Api.Controllers
                 .Skip(pageIndex*pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-            return new TableResponse<Basket>
-            {
-                RecordsTotal = length,
-                Data = basket
-            };
+            return new TableResponse<Basket>(basket, length);
+           
         }
-        [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult>GetById(int Id)
-        {
-            var basket = await _basketManager.GetById(Id);    
-            if (basket != null)
-            {
-                return Ok(basket);
-            }
-            return BadRequest(false);
-        }
+        //[HttpGet]
+        //[Route("GetById")]
+        //public async Task<IActionResult>GetById(int Id)
+        //{
+        //    var basket = await _basketManager.GetById(Id);    
+        //    if (basket != null)
+        //    {
+        //        return Ok(basket);
+        //    }
+        //    return BadRequest(false);
+        //}
         [HttpPost]
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(BasketModel model)
@@ -61,10 +59,9 @@ namespace Odai.Api.Controllers
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                 }).ToList();
-                basket.UserId = model.UserId; 
+                basket.ClientId = model.ClientId; 
                 basket.CreatonDate= DateTime.Now;
-                basket.CreatedBy = model.UserId;
-                await _basketManager.Add(basket);
+                await _basketManager.Insert(basket);
                 await _basketManager.SaveChangesAsync();
                 return Ok(new Response<bool> { Succeeded = true, Message = "Item added To basket successfully.", Data = true });
             }
@@ -81,9 +78,8 @@ namespace Odai.Api.Controllers
                         ProductId = item.ProductId,
                         Quantity = item.Quantity,
                     }).ToList();
-                    basket.UserId = model.UserId;
+                    basket.ClientId = model.ClientId;
                     basket.LastUpdateDate = DateTime.Now;
-                    basket.LastUpdateBy = model.UserId;
                     _basketManager.Update(basket);
                    await _basketManager.SaveChangesAsync();
                     return Ok(new Response<bool> { Succeeded = true, Message = "Item updated To basket successfully.", Data = true });
@@ -102,7 +98,7 @@ namespace Odai.Api.Controllers
                 await _basketManager.SaveChangesAsync();
                 return Ok(new Response<bool> { Succeeded = true, Message = "Basket deleted successfully." });
            }
-            return NotFound(new Response<bool>("Not Found Basket"));
+            return NotFound(new Response<bool>(ResponseMessages.NotFound, HttpStatusCodes.NotFound));
         }
     }
 }

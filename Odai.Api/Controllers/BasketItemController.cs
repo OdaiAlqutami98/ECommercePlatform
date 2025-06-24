@@ -32,15 +32,15 @@ namespace Odai.Api.Controllers
         }
         [HttpGet]
         [Route("GetById")]
-        public async Task<IActionResult>GetById(int id)
-        {
-            var basketItem = await _basketItemManager.GetById(id);
-            if (basketItem is not null)
-            {
-                return Ok(basketItem);
-            }
-            return BadRequest(new Response<bool>());
-        }
+        //public async Task<IActionResult>GetById(int id)
+        //{
+        //    var basketItem = await _basketItemManager.GetById(id);
+        //    if (basketItem is not null)
+        //    {
+        //        return Ok(basketItem);
+        //    }
+        //    return BadRequest(new Response<bool>());
+        //}
         [HttpPost]
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(BasketItemModel model)
@@ -52,10 +52,9 @@ namespace Odai.Api.Controllers
                 basket.ProductId = model.ProductId;
                 basket.Quantity = model.Quantity;
                 basket.UnitPrice=model.UnitPrice;
-                basket.UserId = model.UserId;
+                basket.ClientId = model.ClientId;
                 basket.CreatonDate = DateTime.Now;
-                basket.CreatedBy = model.UserId;
-                await _basketItemManager.Add(basket);
+                await _basketItemManager.Insert(basket);
                 await _basketItemManager.SaveChangesAsync();
                 return Ok(new Response<bool> { Succeeded = true, Message = "Item added To Basket successfully.", Data = true });
             }
@@ -68,9 +67,8 @@ namespace Odai.Api.Controllers
                     basketItem.ProductId= model.ProductId;
                     basketItem.Quantity= model.Quantity;
                     basketItem.UnitPrice= model.UnitPrice;
-                    basketItem.UserId = model.UserId;
+                    basketItem.ClientId = model.ClientId;
                     basketItem.LastUpdateDate = DateTime.Now;
-                    basketItem.LastUpdateBy = model.UserId;
                     _basketItemManager.Update(basketItem);
                     await _basketItemManager.SaveChangesAsync();
                     return Ok(new Response<bool> { Succeeded = true, Message = "Item Updated To Basket successfully.", Data=true });

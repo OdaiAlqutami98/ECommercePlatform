@@ -4,12 +4,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Odai.DataModel;
-using Odai.Logic.Common.Interface;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Odai.Logic.Manager;
-using Odai.Logic.Common.Service;
-using Odai.Domain.Entities;
+using ECommercePlatform.Domain.Identity;
+using ECommercePlatform.Logic.Services.IdentityUser;
+using ECommercePlatform.Logic.Services.Menu;
+using ECommercePlatform.Logic.Services.RoleMenuItems;
+using ECommercePlatform.Logic.Services.Category;
+using ECommercePlatform.Logic.Services.Product;
+using ECommercePlatform.Logic.Services.UserType;
+using ECommercePlatform.Logic.Services.Role;
+using ECommercePlatform.Logic.Services.Setting;
+using ECommercePlatform.Logic.Services.Report.ExportFactory;
+using ECommercePlatform.Logic.Services.Report.ExportService;
+using ECommercePlatform.Logic.Services.Report.ExportStrategy;
 
 namespace Odai.Logic
 {
@@ -22,7 +30,7 @@ namespace Odai.Logic
             {
                 option.UseSqlServer(IdentityConnString, builder => builder.MigrationsAssembly(typeof(OdaiDbContext).Assembly.FullName));
             });
-            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+            services.AddIdentity<User, Role>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 6;
@@ -53,16 +61,30 @@ namespace Odai.Logic
                 };
             });
             services.AddTransient<IIdentityService, IdentityService>();
-            services.AddScoped<UserManager<ApplicationUser>>();
-            services.AddScoped<SignInManager<ApplicationUser>>();
-            services.AddScoped<CategoryManager>();
-            services.AddScoped<ProductManager>();
-            services.AddScoped<OrderItemManager>();
-            services.AddScoped<OrderManager>();
-            services.AddScoped<RatingManager>();
-            services.AddScoped<BasketManager>();
-            services.AddScoped<BasketItemManager>();
-            services.AddScoped<CommentManager>();
+            services.AddScoped<UserManager<User>>();
+            services.AddScoped<SignInManager<User>>();
+            services.AddScoped<RoleService>();
+            services.AddTransient<IMenuService, MenuService>();
+            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IRoleMenuItemsService, RoleMenuItemsService>();
+            services.AddTransient<IUserTypeService, UserTypeService>();
+            services.AddTransient<ISettingService, SettingService>();
+            services.AddTransient<ReportExportStrategy>();
+            services.AddTransient<PdfExportService>();
+            services.AddTransient<ExcelExportService>();
+            services.AddTransient<IReportExportStrategy, PdfExportStrategy>();
+            services.AddTransient<IReportExportStrategy, ExcelExportStrategy>();
+
+            //services.AddScoped<ProductManager>();
+            //services.AddScoped<OrderItemManager>();
+            //services.AddScoped<OrderManager>();
+            //services.AddScoped<RatingManager>();
+            //services.AddScoped<BasketManager>();
+            //services.AddScoped<BasketItemManager>();
+            //services.AddScoped<CommentManager>();
+            //services.AddScoped<UserTypeManager>();
+
 
 
             return services;

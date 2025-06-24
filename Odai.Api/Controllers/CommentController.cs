@@ -29,23 +29,19 @@ namespace Odai.Api.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            return new TableResponse<Comment>
-            {
-                RecordsTotal = length,
-                Data = comment
-            };
+            return new TableResponse<Comment>(comment, length);
 
         }
-        [HttpGet("GetById")]
-        public async Task<IActionResult>GetById(int Id)
-        {
-           var comment=await _commentManager.GetById(Id);
-            if (comment is not null)
-            {
-                return Ok(comment);
-            }
-            return BadRequest();
-        }
+        //[HttpGet("GetById")]
+        //public async Task<IActionResult>GetById(int Id)
+        //{
+        //   var comment=await _commentManager.GetById(Id);
+        //    if (comment is not null)
+        //    {
+        //        return Ok(comment);
+        //    }
+        //    return BadRequest();
+        //}
         [HttpPost("AddEdit")]
         public async Task<IActionResult> AddEdit(CommentModel model)
         {
@@ -54,10 +50,9 @@ namespace Odai.Api.Controllers
                 Comment comment =new Comment();
                 comment.ProductId = model.ProductId;
                 comment.Content = model.Content;
-                comment.UserId= model.UserId;
-                comment.CreatedBy = model.UserId;
+                comment.ClientId = model.ClientId;
                 comment.CreatonDate = DateTime.Now;
-                await _commentManager.Add(comment);
+                await _commentManager.Insert(comment);
                 await  _commentManager.SaveChangesAsync();
                 return Ok(new Response<bool> { Succeeded = true, Message = "Comment Added successfully." });
 
@@ -68,9 +63,8 @@ namespace Odai.Api.Controllers
                 if( comment is not null )
                 {
                    comment.Content = model.Content;
-                    comment.UserId= model.UserId;
+                    comment.ClientId = model.ClientId;
                     comment.ProductId= model.ProductId;
-                    comment.LastUpdateBy=model.UserId;
                     comment.LastUpdateDate= DateTime.Now;
                     _commentManager.Update(comment);
                      await _commentManager.SaveChangesAsync();

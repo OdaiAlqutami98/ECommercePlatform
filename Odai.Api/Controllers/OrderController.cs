@@ -28,25 +28,22 @@ namespace Odai.Api.Controllers
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-           
-            return new TableResponse<Order>
-            {
-                RecordsTotal = length,
-                Data = orders
-            };
+
+            return new TableResponse<Order>(orders, length);
+            
 
         }
-        [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult>GetById(int id)
-        {
-            var order = await _orderManager.GetById(id);
-            if (order is not null)
-            {
-                return Ok(order);
-            }
-            return BadRequest(false);
-        }
+        //[HttpGet]
+        //[Route("GetById")]
+        //public async Task<IActionResult>GetById(int id)
+        //{
+        //    var order = await _orderManager.GetById(id);
+        //    if (order is not null)
+        //    {
+        //        return Ok(order);
+        //    }
+        //    return BadRequest(false);
+        //}
         [HttpPost]
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(OrderModel model)
@@ -57,7 +54,7 @@ namespace Odai.Api.Controllers
                 Order order=new Order();
                 order.TotalPrice = model.OrderItems?.Sum(item => item.Quantity * item.UnitPrice) ?? 0;
                 order.Status = (OrderStatus?)model.Status;
-                order.UserId = model.UserId;
+                //order.UserId = model.UserId;
                 order.OrderItems = model.OrderItems?.Select(item => new OrderItem
                 {
                     ProductId = item.ProductId,
@@ -66,7 +63,7 @@ namespace Odai.Api.Controllers
                 }).ToList();
                 order.CreatedBy = model.UserId;
                 order.CreatonDate = DateTime.Now;
-                await _orderManager.Add(order);
+                await _orderManager.Insert(order);
                 await _orderManager.SaveChangesAsync();
                 return Ok(new Response<bool>{ Succeeded = true, Message = "Order added successfully.", Data = true });
             }
@@ -112,7 +109,7 @@ namespace Odai.Api.Controllers
                 await _orderManager.SaveChangesAsync();
                 return Ok(new Response<bool>());
             }
-            return NotFound(new Response<bool>("Not Found Order"));
+            return NotFound(new Response<bool>());
         }
     }
 }

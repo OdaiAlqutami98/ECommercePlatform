@@ -7,21 +7,39 @@ namespace Odai.Shared.Auth
         public string Message { get; set; }
         public List<string> Errors { get; set; }
         public T Data { get; set; }
-        public Response(T data,string message=null) 
+        public int StatusCode { get; set; }
+
+        public Response(T data, int statusCode, string? message = null)
         {
             Succeeded = true;
-            Message = message;
+            Message = message ?? "Operation succeeded";
             Data = data;
+            StatusCode = statusCode;
         }
-        public Response(bool succeeded = true) 
+        public Response(bool succeeded = true)
         {
             Succeeded = succeeded;
             Message = "SUCCEED";
         }
-        public Response(string message)
+        public Response(bool succeeded, int statusCode, string? message = null)
+        {
+            Succeeded = succeeded;
+            StatusCode = statusCode;
+            Message = message ?? (succeeded ? "SUCCEED" : "FAILED");
+        }
+        public Response(string message, int statusCode)
         {
             Succeeded = false;
             Message = message;
+            Errors = new List<string> { message };
+            StatusCode = statusCode;
+        }
+        public Response(List<string> errors, int statusCode)
+        {
+            Succeeded = false;
+            Errors = errors;
+            Message = "One or more errors occurred.";
+            StatusCode = statusCode;
         }
     }
 }

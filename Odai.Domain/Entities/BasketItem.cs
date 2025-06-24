@@ -1,4 +1,6 @@
-﻿using Odai.Domain.Common;
+﻿using ECommercePlatform.Domain.Entities;
+using ECommercePlatform.Domain.Identity;
+using Odai.Domain.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Odai.Domain.Entities
@@ -7,16 +9,16 @@ namespace Odai.Domain.Entities
     {
         public int BasketId { get; set; }
         [ForeignKey("BasketId")]
-        public Basket? Basket { get; set; }
+        public virtual Basket? Basket { get; set; }
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
-        public Product? Product { get; set; }
+        public virtual Product? Product { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
 
-        public Guid UserId { get; set; }
-        [ForeignKey("UserId")]
-        public ApplicationUser? User { get; set; }
+        public int ClientId { get; set; }
+        [ForeignKey("ClientId")]
+        public virtual Clients? Clients { get; set; }
 
     }
 }

@@ -4,7 +4,7 @@ using Odai.Logic.Common;
 
 namespace Odai.Logic.Manager
 {
-    public class BasketItemManager:BaseManager<BasketItem,OdaiDbContext>
+    public class BasketItemManager: BaseServiceIdentity<BasketItem,OdaiDbContext>
     {
         public BasketItemManager(OdaiDbContext context):base(context)
         {

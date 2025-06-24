@@ -29,17 +29,17 @@ namespace Odai.Api.Controllers
             }
             return BadRequest(false);
         }
-        [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult>GetById(int id)
-        {
-            var orderItem = await _orderItemManager.GetById(id);
-            if (orderItem != null)
-            {
-                return Ok(orderItem);
-            }
-            return BadRequest(false);
-        }
+        //[HttpGet]
+        //[Route("GetById")]
+        //public async Task<IActionResult>GetById(int id)
+        //{
+        //    var orderItem = await _orderItemManager.GetById(id);
+        //    if (orderItem != null)
+        //    {
+        //        return Ok(orderItem);
+        //    }
+        //    return BadRequest(false);
+        //}
         [HttpPost]
         [Route("AddEdit")]
         public async Task<IActionResult>AddEdit(OrderItemModel model)
@@ -53,7 +53,7 @@ namespace Odai.Api.Controllers
                 orderItem.ProductId = model.ProductId;
                 orderItem.UnitPrice=model.UnitPrice;
                 orderItem.CreatonDate=DateTime.Now;
-                await _orderItemManager.Add(orderItem);
+                await _orderItemManager.Insert(orderItem);
                 order.TotalPrice = order.OrderItems.Sum(item => item.Quantity * item.UnitPrice);
                 _orderManager.Update(order);
                 await _orderItemManager.SaveChangesAsync();

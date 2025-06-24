@@ -1,45 +1,39 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using ECommercePlatform.Domain.Identity;
+using ECommercePlatform.Logic.Services.IdentityUser;
+using ECommercePlatform.Shared.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Odai.DataModel;
-using Odai.Domain.Entities;
-using Odai.Logic.Common.Interface;
 using Odai.Shared.Auth;
-using Odai.Shared.Models;
-using System.Security.Principal;
 
 namespace Odai.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Owner")]
     public class UserController : ControllerBase
     {
         private readonly IIdentityService _identityService;
-        private readonly OdaiDbContext _context;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        public UserController(IIdentityService identityService, OdaiDbContext context, SignInManager<ApplicationUser> signInManager)
+        private readonly SignInManager<User> _signInManager;
+        public UserController(IIdentityService identityService, SignInManager<User> signInManager)
         {
-            _context = context;
             _identityService = identityService;
             _signInManager = signInManager;
         }
 
-        [HttpPost]
-        [Route("Register")]
+        [HttpPost("Register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(ApplicationUserModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
-            var respone = await _identityService.RegisterUserAsync(model);
-            if(respone.Succeeded)
+            var respone = await _identityService.Register(model);
+            if (respone.Succeeded)
             {
                 return Ok(respone);
-
             }
             return BadRequest(respone);
         }
-        [HttpPost]
-        [Route("Login")]
+        [HttpPost("Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequstt request)
         {
@@ -47,8 +41,9 @@ namespace Odai.Api.Controllers
             if (response.Succeeded)
             {
                 SetTokenCookie(response.Data.Token);
+                return Ok(response);
             }
-            return Ok(response);
+            return BadRequest(response);
         }
         [HttpPost("logout")]
         [AllowAnonymous]
@@ -56,7 +51,15 @@ namespace Odai.Api.Controllers
         {
             await _signInManager.SignOutAsync();
             return Ok();
-         
+
+        }
+        [HttpGet]
+        [Route("RegisterAdministrator")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterAdministrator()
+        {
+            var res = await _identityService.CreateUserAsync("Owner@OdaiShop.com", "P@ssw0rd");
+            return Ok(res);
         }
         private void SetTokenCookie(string token)
         {
@@ -68,5 +71,6 @@ namespace Odai.Api.Controllers
             };
             Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
+
     }
 }
