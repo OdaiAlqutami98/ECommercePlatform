@@ -15,9 +15,9 @@ using ECommercePlatform.Logic.Services.Product;
 using ECommercePlatform.Logic.Services.UserType;
 using ECommercePlatform.Logic.Services.Role;
 using ECommercePlatform.Logic.Services.Setting;
-using ECommercePlatform.Logic.Services.Report.ExportFactory;
 using ECommercePlatform.Logic.Services.Report.ExportService;
 using ECommercePlatform.Logic.Services.Report.ExportStrategy;
+using ECommercePlatform.Logic.Services.Report.GenerateStrategy;
 
 namespace Odai.Logic
 {

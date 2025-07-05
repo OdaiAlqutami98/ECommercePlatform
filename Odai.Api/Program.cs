@@ -2,8 +2,15 @@ using Microsoft.OpenApi.Models;
 using Odai.Logic;
 using Microsoft.Extensions.FileProviders;
 using ECommercePlatform.Api.Middlewares;
+using Serilog;
 
+Log.Logger=new LoggerConfiguration()
+    .WriteTo.File(path: "logs/log-.txt",
+    rollingInterval: RollingInterval.Day,
+    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
+    .CreateLogger();
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 // Add services to the container.
 

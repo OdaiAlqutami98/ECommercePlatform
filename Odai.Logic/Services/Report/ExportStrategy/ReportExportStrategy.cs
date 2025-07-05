@@ -1,5 +1,6 @@
 ﻿using ECommercePlatform.Logic.Services.Report.ExportService;
 using ECommercePlatform.Logic.Services.Report.ExportStrategy;
+using ECommercePlatform.Logic.Services.Report.GenerateStrategy;
 using Odai.DataModel;
 using Odai.Domain.Enums;
 

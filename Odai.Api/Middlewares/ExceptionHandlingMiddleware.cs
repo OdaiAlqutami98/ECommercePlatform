@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using Serilog;
 
 namespace ECommercePlatform.Api.Middlewares
 {
@@ -24,23 +25,7 @@ namespace ECommercePlatform.Api.Middlewares
         }
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
-            if (!Directory.Exists(logDirectory))
-            {
-                Directory.CreateDirectory(logDirectory);
-            }
-            var logFileName = $"errors-{DateTime.Now:yyyy-MM-dd}.txt";
-            var logPath = Path.Combine(logDirectory, logFileName);
-            var errorLog = $@"
-                ====================
-                Date:{DateTime.Now}
-                Path:{context.Request.Path}
-                Message:{ex.Message}
-                StackTrace:{ex.StackTrace}
-                ====================";
-
-            await File.AppendAllTextAsync(logPath, errorLog);
-
+            Log.Error(ex, "An error occurred while processing the request. Path: {Path}", context.Request.Path);
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
 

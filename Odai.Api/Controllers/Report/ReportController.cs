@@ -1,11 +1,7 @@
 ﻿using ECommercePlatform.Domain.Report;
-using ECommercePlatform.Logic.Services.Report.ExportFactory;
-using Microsoft.AspNetCore.Http;
+using ECommercePlatform.Logic.Services.Report.ExportStrategy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Odai.DataModel;
-using Odai.Domain.Enums;
 
 namespace ECommercePlatform.Api.Controllers.Report
 {
