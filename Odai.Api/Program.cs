@@ -4,12 +4,12 @@ using Microsoft.Extensions.FileProviders;
 using ECommercePlatform.Api.Middlewares;
 using Serilog;
 
-Log.Logger=new LoggerConfiguration()
-    .WriteTo.File(path: "logs/log-.txt",
-    rollingInterval: RollingInterval.Day,
-    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
-    .CreateLogger();
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
 builder.Host.UseSerilog();
 
 // Add services to the container.
